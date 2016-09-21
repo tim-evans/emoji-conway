@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Conway's Game of Life</title>
+    <script src="umd/conway.js"></script>
+    <style>
+      td {
+        width: 20px;
+        height: 20px;
+        transition: all 120ms;
+      }
+
+      .alive {
+        background: green;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      var game = new Conway();
+      game.setState({
+        M: 20,
+        N: 20,
+        liveCells: [[2,1],[2,2],[2,3]]
+      });
+    </script>
+  </body>
+</html>
