@@ -1,80 +1,42 @@
-function Conway() {}
+import GameBoard from './game-board';
 
-Conway.prototype = {
-  render() {
-    let body = document.body;
-    let table = document.createElement('table');
-
-    for (let row = 0, rowCount = this.M; row < rowCount; row++) {
-      let tr = document.createElement('tr');
-      for (let col = 0, colCount = this.N; col < colCount; col++) {
-        let td = document.createElement('td');
-        td.innerHTML = '&nbsp;';
-        if (this.isActive(row, col)) {
-          td.classList.add('alive');
-        }
-        tr.appendChild(td);
-      }
-      table.appendChild(tr);
-    }
-    body.appendChild(table);
-    this.element = table;
-
-    this.oldCells = this.liveCells;
-  },
-
-  isActive(m, n) {
-    return this.activeCells && this.activeCells[m] && this.activeCells[m][n];
-  },
-
-  get liveCells() {
-    return this._liveCells;
-  },
-
-  set liveCells(cells) {
-    this._liveCells = cells;
-    this.activeCells = cells.reduce(function (activeCells, cell) {
-      let [x, y] = cell;
-      activeCells[x] = activeCells[x] || [];
-      activeCells[x][y] = true;
-      return activeCells;
-    }, []);
-
-    return cells;
-  },
-
-  setState(key, value) {
-    if (typeof key === 'object') {
-      Object.keys(key).forEach((k) => {
-        this[k] = key[k];
-      });
-    } else {
-      this[key] = value;
-    }
-
-    if (this.element) {
-      this.rerender();
-    } else {
-      this.render();
-    }
-  },
-
-  rerender() {
-    let element = this.element;
-
-    this.oldCells.forEach(function ([x, y]) {
-      let td = element.querySelectorAll('tr')[x].querySelectorAll('td')[y];
-      td.classList.remove('alive');
-    });
-
-    this.liveCells.forEach(function ([x, y]) {
-      let td = element.querySelectorAll('tr')[x].querySelectorAll('td')[y];
-      td.classList.add('alive');
-    });
-
-    this.oldCells = this.liveCells;
-  }
+function Conway {
+  this.board = new GameBoard();
+  let lifeform = document.querySelector('#lifeform').value;
+  document.querySelector('button').removeAttribute('disabled');
+  document.querySelector('#lifeform-character').innerHTML = lifeform;
+  this.board.setState({
+    M: parseInt(document.querySelector('#m').value, 10),
+    N: parseInt(document.querySelector('#n').value, 10),
+    lifeform,
+    liveCells: []
+  });
 }
 
-export default Conway;
+Conway.prototype = {
+  start() {
+    document.querySelector('button').disabled = true;
+    this.next();
+  },
 
+  next() {
+    let { M, N, liveCells } = this.board;
+
+    $.ajax({
+      url: 'http://localhost:3000/api/conway/generation',
+      jsonp: 'callback',
+      dataType: 'jsonp',
+      data: { M, N, liveCells },
+      success: (response) => {
+        this.board.setState(response);
+        if (this.board.liveCells.length > 0) {
+          setTimeout(() => this.next(), 100);
+        } else {
+          document.querySelector('button').removeAttribute('disabled');
+        }
+      }
+    });
+  }
+};
+
+export default Conway;

@@ -11,5 +11,8 @@
     "broccoli-funnel": "^1.0.7",
     "broccoli-merge-trees": "^1.1.4",
     "broccoli-module-alchemist": "^0.3.0"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
   }
 }
