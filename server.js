@@ -1,6 +1,8 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 
+app.use(bodyParser.json());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -46,20 +48,25 @@ function nextGeneration(M, N, liveCells) {
   return generation;
 }
 
-app.get('/api/conway/generation', function (req, res) {
-  var M = req.query.M;
-  var N = req.query.N;
-  var liveCells = Object.keys(req.query.liveCells || {}).map(function (i) {
-    var cell = req.query.liveCells[i];
-    return [parseInt(cell[0], 10),
-            parseInt(cell[1], 10)];
-  });
+app.options('*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.sendStatus(204);
+});
 
-  res.send(req.query.callback + '(' + JSON.stringify({
+app.post('/api/conway/generation', function (req, res) {
+  var M = req.body.M;
+  var N = req.body.N;
+  var liveCells = req.body.liveCells;
+  if (req.body.generation === 0) {
+    console.log('🌱 Starting a new world!');
+  }
+
+  res.send(JSON.stringify({
     M: M,
     N: N,
     liveCells: nextGeneration(M, N, liveCells)
-  }) + ')');
+  }));
 });
 
 app.get('*', function (_, res) {
@@ -71,5 +78,5 @@ app.all('*', function (_, res) {
 });
 
 app.listen(3000, function () {
-  console.log('Conway server listening on port 3000');
+  console.log('✌️ Conway server listening on port 3000');
 });

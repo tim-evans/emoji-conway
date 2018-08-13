@@ -1,42 +1,27 @@
-import GameBoard from './game-board';
+import Conway from './conway';
 
-function Conway {
-  this.board = new GameBoard();
-  let lifeform = document.querySelector('#lifeform').value;
-  document.querySelector('button').removeAttribute('disabled');
-  document.querySelector('#lifeform-character').innerHTML = lifeform;
-  this.board.setState({
-    M: parseInt(document.querySelector('#m').value, 10),
-    N: parseInt(document.querySelector('#n').value, 10),
-    lifeform,
-    liveCells: []
-  });
-}
+let conway = new Conway();
+conway.board.setState({
+  liveCells: [
+    [13, 13], [13, 14], [13, 15], [13, 16], [13, 17],
+    [15, 13], [15, 17],
+    [17, 13], [17, 14], [17, 15], [17, 16], [17, 17],
+  ]
+});
 
-Conway.prototype = {
-  start() {
-    document.querySelector('button').disabled = true;
-    this.next();
-  },
+document.querySelector('#m').addEventListener('input', function () {
+  conway.board.setState({ M: this.value });
+});
 
-  next() {
-    let { M, N, liveCells } = this.board;
+document.querySelector('#n').addEventListener('input', function () {
+  conway.board.setState({ N: this.value });
+});
 
-    $.ajax({
-      url: 'http://localhost:3000/api/conway/generation',
-      jsonp: 'callback',
-      dataType: 'jsonp',
-      data: { M, N, liveCells },
-      success: (response) => {
-        this.board.setState(response);
-        if (this.board.liveCells.length > 0) {
-          setTimeout(() => this.next(), 100);
-        } else {
-          document.querySelector('button').removeAttribute('disabled');
-        }
-      }
-    });
-  }
-};
+document.querySelector('#lifeform').addEventListener('input', function () {
+  document.querySelector('#lifeform-character').innerHTML = this.value;
+  conway.board.setState({ lifeform: this.value });
+});
 
-export default Conway;
+document.querySelector('button').addEventListener('click', function () {
+  conway.start();
+});

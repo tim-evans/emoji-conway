@@ -1,18 +1,15 @@
 {
   "name": "conway",
+  "private": true,
   "version": "0.0.1",
   "engines": {
     "node": ">= 0.10.0"
   },
   "author": "Tim Evans <tim.c.evans@me.com>",
   "license": "MIT",
-  "devDependencies": {
-    "broccoli": "^0.16.5",
-    "broccoli-funnel": "^1.0.7",
-    "broccoli-merge-trees": "^1.1.4",
-    "broccoli-module-alchemist": "^0.3.0"
-  },
   "dependencies": {
-    "express": "^4.14.0"
+    "body-parser": "^1.18.3",
+    "express": "^4.14.0",
+    "parcel": "^1.9.7"
   }
 }

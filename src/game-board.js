@@ -1,11 +1,12 @@
-function GameBoard() {
-  this.liveCells = [];
-  this.element = document.querySelector('table');
-  this._click = (evt) => this.click(evt);
-  this.element.addEventListener('click', this._click, false);
-}
+export default class GameBoard {
+  constructor() {
+    this.liveCells = [];
+    this.generation = 0;
+    this.element = document.querySelector('table');
+    this._click = (evt) => this.click(evt);
+    this.element.addEventListener('click', this._click, false);
+  }
 
-GameBoard.prototype = {
   render() {
     let table = this.element;
     table.innerHTML = '';
@@ -33,15 +34,11 @@ GameBoard.prototype = {
     }
 
     this.oldCells = this.liveCells;
-  },
-
-  beginEditing() {
-
-  },
+  }
 
   click(evt) {
     let cell = evt.target;
-    if (cell.tagName.toUpperCase() === 'TD') {
+    if (cell && cell.tagName.toUpperCase() === 'TD') {
       let x = parseInt(cell.dataset.x, 10);
       let y = parseInt(cell.dataset.y, 10);
       let alive = cell.dataset.status === 'alive';
@@ -57,7 +54,7 @@ GameBoard.prototype = {
       }
       this.setState({ liveCells });
     }
-  },
+  }
 
   setState(key, value) {
     let { M, N } = this;
@@ -74,7 +71,7 @@ GameBoard.prototype = {
     } else {
       this.render();
     }
-  },
+  }
 
   rerender() {
     let element = this.element;
@@ -94,5 +91,3 @@ GameBoard.prototype = {
     this.oldCells = this.liveCells;
   }
 };
-
-export default GameBoard;
